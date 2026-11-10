@@ -63,6 +63,7 @@ fun GeoQuizScreen() {
     var hasAnswered by remember { mutableStateOf(false) }
     var answerMessage by remember { mutableStateOf("") }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,20 +142,21 @@ fun GeoQuizScreen() {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Button(
-            onClick = {
-                if (currentQuestionIndex < questions.lastIndex) {
-                    currentQuestionIndex++
-                    hasAnswered = false
-                    answerMessage = ""
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = currentQuestionIndex < questions.lastIndex
-        ) {
-            Text("Next")
+        if (currentQuestionIndex < questions.lastIndex) {
+            Button(
+                onClick = {
+                    if (currentQuestionIndex < questions.lastIndex) {
+                        currentQuestionIndex++
+                        hasAnswered = false
+                        answerMessage = ""
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = currentQuestionIndex < questions.lastIndex
+            ) {
+                Text("Next")
+            }
         }
-
         Spacer(modifier = Modifier.height(25.dp))
 
         Text(
