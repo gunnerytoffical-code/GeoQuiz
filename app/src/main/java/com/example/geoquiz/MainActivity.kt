@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -62,7 +64,8 @@ fun GeoQuizScreen() {
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
     var hasAnswered by remember { mutableStateOf(false) }
     var answerMessage by remember { mutableStateOf("") }
-
+    var correctAnswers by remember { mutableIntStateOf(0) }
+    var showResultDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -95,6 +98,7 @@ fun GeoQuizScreen() {
 
         Spacer(modifier = Modifier.height(35.dp))
 
+
         if (!hasAnswered) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -103,14 +107,19 @@ fun GeoQuizScreen() {
                 Button(
                     onClick = {
                         hasAnswered = true
-                        answerMessage = if (questions[currentQuestionIndex].answer) {
-                            "Правильно!"
+
+                        if (questions[currentQuestionIndex].answer) {
+                            correctAnswers++
+                            answerMessage = "Правильно!"
                         } else {
-                            "Неправильно!"
+                            answerMessage = "Неправильно!"
+                        }
+
+                        if (currentQuestionIndex == questions.lastIndex) {
+                            showResultDialog = true
                         }
                     },
-                    modifier = Modifier.weight(1f),
-                    enabled = !hasAnswered
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text("True")
                 }
@@ -118,19 +127,25 @@ fun GeoQuizScreen() {
                 Button(
                     onClick = {
                         hasAnswered = true
-                        answerMessage = if (!questions[currentQuestionIndex].answer) {
-                            "Правильно!"
+
+                        if (!questions[currentQuestionIndex].answer) {
+                            correctAnswers++
+                            answerMessage = "Правильно!"
                         } else {
-                            "Неправильно!"
+                            answerMessage = "Неправильно!"
+                        }
+
+                        if (currentQuestionIndex == questions.lastIndex) {
+                            showResultDialog = true
                         }
                     },
-                    modifier = Modifier.weight(1f),
-                    enabled = !hasAnswered
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text("False")
                 }
             }
         }
+
         if (hasAnswered) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -152,17 +167,43 @@ fun GeoQuizScreen() {
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = currentQuestionIndex < questions.lastIndex
+                enabled = hasAnswered
             ) {
                 Text("Next")
             }
         }
         Spacer(modifier = Modifier.height(25.dp))
 
-        Text(
-            text = "Правильных ответов: 0",
-            fontSize = 16.sp
-        )
+
+
+        if (showResultDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    // Окно закрывается только кнопкой перезапуска
+                },
+                title = {
+                    Text("Викторина завершена!")
+                },
+                text = {
+                    Text(
+                        "Ваш результат: $correctAnswers из ${questions.size}"
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            currentQuestionIndex = 0
+                            correctAnswers = 0
+                            hasAnswered = false
+                            answerMessage = ""
+                            showResultDialog = false
+                        }
+                    ) {
+                        Text("Начать заново")
+                    }
+                }
+            )
+        }
     }
 }
 
