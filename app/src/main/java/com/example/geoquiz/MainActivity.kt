@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,16 +45,23 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GeoQuizScreen() {
 
+    data class QuizQuestion(
+        val text: String,
+        val answer: Boolean
+    )
+
     val questions = listOf(
-        "Canberra is the capital of Australia.",
-        "The Pacific Ocean is larger than the Atlantic Ocean.",
-        "The Suez Canal connects the Red Sea and the Indian Ocean.",
-        "The source of the Nile River is in Egypt.",
-        "The Amazon River is the longest river in the Americas.",
-        "Lake Baikal is the world's oldest and deepest freshwater lake."
+        QuizQuestion("Canberra is the capital of Australia.", true),
+        QuizQuestion("The Pacific Ocean is larger than the Atlantic Ocean.", true),
+        QuizQuestion("The Suez Canal connects the Red Sea and the Indian Ocean.", false),
+        QuizQuestion("The source of the Nile River is in Egypt.", false),
+        QuizQuestion("The Amazon River is the longest river in the Americas.", true),
+        QuizQuestion("Lake Baikal is the world's oldest and deepest freshwater lake.", true)
     )
 
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
+    var hasAnswered by remember { mutableStateOf(false) }
+    var answerMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -79,7 +87,7 @@ fun GeoQuizScreen() {
         Spacer(modifier = Modifier.height(25.dp))
 
         Text(
-            text = questions[currentQuestionIndex],
+            text = questions[currentQuestionIndex].text,
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium
         )
@@ -91,18 +99,43 @@ fun GeoQuizScreen() {
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Button(
-                onClick = {},
-                modifier = Modifier.weight(1f)
+                onClick = {
+                    hasAnswered = true
+                    answerMessage = if (questions[currentQuestionIndex].answer) {
+                        "Правильно!"
+                    } else {
+                        "Неправильно!"
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                enabled = !hasAnswered
             ) {
                 Text("True")
             }
 
             Button(
-                onClick = {},
-                modifier = Modifier.weight(1f)
+                onClick = {
+                    hasAnswered = true
+                    answerMessage = if (!questions[currentQuestionIndex].answer) {
+                        "Правильно!"
+                    } else {
+                        "Неправильно!"
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                enabled = !hasAnswered
             ) {
                 Text("False")
             }
+        }
+
+        if (hasAnswered) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = answerMessage,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -111,6 +144,8 @@ fun GeoQuizScreen() {
             onClick = {
                 if (currentQuestionIndex < questions.lastIndex) {
                     currentQuestionIndex++
+                    hasAnswered = false
+                    answerMessage = ""
                 }
             },
             modifier = Modifier.fillMaxWidth(),
