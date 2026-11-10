@@ -16,6 +16,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -36,8 +40,20 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun GeoQuizScreen() {
+
+    val questions = listOf(
+        "Canberra is the capital of Australia.",
+        "The Pacific Ocean is larger than the Atlantic Ocean.",
+        "The Suez Canal connects the Red Sea and the Indian Ocean.",
+        "The source of the Nile River is in Egypt.",
+        "The Amazon River is the longest river in the Americas.",
+        "Lake Baikal is the world's oldest and deepest freshwater lake."
+    )
+
+    var currentQuestionIndex by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -56,14 +72,14 @@ fun GeoQuizScreen() {
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Вопрос 1 из 6",
+            text = "Вопрос ${currentQuestionIndex + 1} из ${questions.size}",
             fontSize = 18.sp
         )
 
         Spacer(modifier = Modifier.height(25.dp))
 
         Text(
-            text = "Canberra is the capital of Australia.",
+            text = questions[currentQuestionIndex],
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium
         )
@@ -92,8 +108,13 @@ fun GeoQuizScreen() {
         Spacer(modifier = Modifier.height(30.dp))
 
         Button(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth()
+            onClick = {
+                if (currentQuestionIndex < questions.lastIndex) {
+                    currentQuestionIndex++
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = currentQuestionIndex < questions.lastIndex
         ) {
             Text("Next")
         }
@@ -106,6 +127,7 @@ fun GeoQuizScreen() {
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
