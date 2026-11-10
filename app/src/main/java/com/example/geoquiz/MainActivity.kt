@@ -94,41 +94,42 @@ fun GeoQuizScreen() {
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Button(
-                onClick = {
-                    hasAnswered = true
-                    answerMessage = if (questions[currentQuestionIndex].answer) {
-                        "Правильно!"
-                    } else {
-                        "Неправильно!"
-                    }
-                },
-                modifier = Modifier.weight(1f),
-                enabled = !hasAnswered
+        if (!hasAnswered) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("True")
-            }
+                Button(
+                    onClick = {
+                        hasAnswered = true
+                        answerMessage = if (questions[currentQuestionIndex].answer) {
+                            "Правильно!"
+                        } else {
+                            "Неправильно!"
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                    enabled = !hasAnswered
+                ) {
+                    Text("True")
+                }
 
-            Button(
-                onClick = {
-                    hasAnswered = true
-                    answerMessage = if (!questions[currentQuestionIndex].answer) {
-                        "Правильно!"
-                    } else {
-                        "Неправильно!"
-                    }
-                },
-                modifier = Modifier.weight(1f),
-                enabled = !hasAnswered
-            ) {
-                Text("False")
+                Button(
+                    onClick = {
+                        hasAnswered = true
+                        answerMessage = if (!questions[currentQuestionIndex].answer) {
+                            "Правильно!"
+                        } else {
+                            "Неправильно!"
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                    enabled = !hasAnswered
+                ) {
+                    Text("False")
+                }
             }
         }
-
         if (hasAnswered) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
